@@ -1,12 +1,15 @@
-# mushaf
+# Build a Qurʾān app that matches the printed muṣḥaf
 
-**A Claude skill for building a Qurʾān reader whose pages match the printed
-muṣḥaf** — the same āyāt on the same leaf, the same words on the same line, in
-the same hand.
+**An AI agent skill for building a Qurʾān reader whose pages, lines and words
+match a real printed muṣḥaf** — the same āyāt on the same leaf, the same words
+on the same line, in the same hand.
 
-Install it, and Claude Code brings the whole method with it: where the data
-comes from, what each source got wrong, how a page is fitted, how a tap finds
-its āyah, and which fonts you are not allowed to ship.
+Install it, and your coding agent brings the whole method with it: where the
+data comes from, what each source got wrong, how a page is fitted, how a tap
+finds its āyah, and which fonts you are not allowed to ship.
+
+Packaged as a Claude Code skill (`SKILL.md`), portable to any other agent via
+`AGENTS.md`. The three verification scripts need no agent at all.
 
 ---
 
@@ -33,28 +36,53 @@ This skill is the accumulated cost of finding them.
 
 ## Install
 
-```bash
-git clone https://github.com/<you>/mushaf ~/.claude/skills/mushaf
-```
-
-Or, to scope it to one project:
+### Claude Code
 
 ```bash
-git clone https://github.com/<you>/mushaf .claude/skills/mushaf
+git clone https://github.com/abdelrahman-abied/build-a-quran-app-ai-skill ~/.claude/skills/mushaf
 ```
 
-Claude Code picks it up on the next session. Ask for anything muṣḥaf-shaped —
-*"build a Qurʾān reader with real page layout"*, *"why is my highlight one word
-off"*, *"can I bundle this font"* — and it loads.
+Or, scoped to one project:
+
+```bash
+git clone https://github.com/abdelrahman-abied/build-a-quran-app-ai-skill .claude/skills/mushaf
+```
+
+It is picked up on the next session and loads itself when you ask for anything
+muṣḥaf-shaped — *"build a Qurʾān reader with real page layout"*, *"why is my
+highlight one word off"*, *"can I bundle this font"*.
+
+### Any other agent
+
+Clone it anywhere in your project and point your agent at `AGENTS.md`, which
+most tools read on their own:
+
+```bash
+git clone https://github.com/abdelrahman-abied/build-a-quran-app-ai-skill .agents/mushaf
+```
+
+`AGENTS.md` is a three-line pointer to `SKILL.md`, so there is one source of
+truth and nothing to keep in sync. `.github/copilot-instructions.md` and
+`GEMINI.md` point at the same place for the tools that look there instead.
+
+What you lose outside Claude Code is the *automatic* loading — most agents read
+their rules file in full, every turn. That is fine here: the whole repository is
+under 3,000 lines.
+
+### No agent at all
+
+The three scripts in `scripts/` are dependency-free Python. Put them in CI and
+you have the gates without any model in the loop.
 
 Works in any language and any framework. The data and typography guidance is
 framework-neutral; `references/flutter.md` is the only Flutter-specific file.
 
 ## What is inside
 
-| | |
+| File | What it holds |
 |---|---|
 | `SKILL.md` | The ten laws, the two rendering models, the six stages |
+| `AGENTS.md` | The portable entry point, for agents that are not Claude Code |
 | `references/sources.md` | Every text / layout / line / glyph / font source, its terms, and the defects found in it |
 | `references/numbering.md` | Āyah, word, page and line numbering — and why three of the four are per-resource |
 | `references/layout.md` | Glyph editions, Unicode editions (IndoPak), tajwīd `COLR`/`CPAL`, the fitting algorithms |
@@ -150,11 +178,14 @@ cannot and does not cover any muṣḥaf resource, because none is shipped here.
 
 هذه المهارة هي ثمن اكتشافها، مكتوبًا.
 
-**التنصيب:**
+**التنصيب** — في Claude Code:
 
 ```bash
-git clone https://github.com/<you>/mushaf ~/.claude/skills/mushaf
+git clone https://github.com/abdelrahman-abied/build-a-quran-app-ai-skill ~/.claude/skills/mushaf
 ```
+
+ومع أي وكيل آخر، استنسخها في مشروعك ووجّهه إلى `AGENTS.md`. والسكربتات الثلاثة
+بايثون بلا اعتمادية واحدة، فتعمل في CI بلا نموذج أصلًا.
 
 **ما فيها:** القوانين العشرة، ونموذجا العرض (طبعة الرموز مقابل الطبعة
 اليونيكودية كإندوباك)، وضبط الصفحة والسطر، وألوان التجويد عبر `COLR`/`CPAL`،
