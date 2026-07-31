@@ -1,0 +1,21 @@
+# Never commit muṣḥaf data or typefaces to this repository.
+# It documents sources and verification; it does not redistribute them.
+*.ttf
+*.otf
+*.ttc
+*.woff
+*.woff2
+*.db
+*.sqlite
+*.sqlite3
+.cache/
+downloads/
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+.DS_Store
+.idea/
+.vscode/
