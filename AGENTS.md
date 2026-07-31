@@ -5,7 +5,7 @@ and loads `references/` on demand; every other tool should start here.
 
 ## Read this first
 
-1. **`SKILL.md`** — the ten laws, the two rendering models, the six stages.
+1. **`SKILL.md`** — the ten laws, the two rendering models, the seven stages.
    Read it in full before writing muṣḥaf code.
 2. **`references/`** — load only what the task needs:
 
@@ -22,7 +22,7 @@ and loads `references/` on demand; every other tool should start here.
 
 ```bash
 python3 scripts/font_licence.py <font-dir>
-python3 scripts/verify_corpus.py --sqlite quran.db --page-col page --pages 604
+python3 scripts/verify_corpus.py --sqlite quran.db --page-col qcf_page --pages 604
 python3 scripts/reconcile_glyphs.py a.json b.json c.json --rulings rulings.json
 ```
 

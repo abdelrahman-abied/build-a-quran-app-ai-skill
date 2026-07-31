@@ -8,8 +8,9 @@ Install it, and your coding agent brings the whole method with it: where the
 data comes from, what each source got wrong, how a page is fitted, how a tap
 finds its āyah, and which fonts you are not allowed to ship.
 
-Packaged as a Claude Code skill (`SKILL.md`), portable to any other agent via
-`AGENTS.md`. The three verification scripts need no agent at all.
+Packaged as a Claude Code skill ([`SKILL.md`](SKILL.md)), portable to any other
+agent via [`AGENTS.md`](AGENTS.md). The three verification scripts need no agent
+at all.
 
 ---
 
@@ -61,9 +62,11 @@ most tools read on their own:
 git clone https://github.com/abdelrahman-abied/build-a-quran-app-ai-skill .agents/mushaf
 ```
 
-`AGENTS.md` is a three-line pointer to `SKILL.md`, so there is one source of
-truth and nothing to keep in sync. `.github/copilot-instructions.md` and
-`GEMINI.md` point at the same place for the tools that look there instead.
+[`AGENTS.md`](AGENTS.md) carries the ten laws and a table saying which reference
+file a given task needs; everything deeper stays in [`SKILL.md`](SKILL.md).
+[`.github/copilot-instructions.md`](.github/copilot-instructions.md) and
+[`GEMINI.md`](GEMINI.md) are short pointers to it, for the tools that look there
+instead.
 
 What you lose outside Claude Code is the *automatic* loading — most agents read
 their rules file in full, every turn. That is fine here: the whole repository is
@@ -71,25 +74,26 @@ under 3,000 lines.
 
 ### No agent at all
 
-The three scripts in `scripts/` are dependency-free Python. Put them in CI and
-you have the gates without any model in the loop.
+The three scripts in [`scripts/`](scripts/) are dependency-free Python. Put them
+in CI and you have the gates without any model in the loop.
 
 Works in any language and any framework. The data and typography guidance is
-framework-neutral; `references/flutter.md` is the only Flutter-specific file.
+framework-neutral; [`references/flutter.md`](references/flutter.md) is the only
+Flutter-specific file.
 
 ## What is inside
 
 | File | What it holds |
 |---|---|
-| `SKILL.md` | The ten laws, the two rendering models, the six stages |
-| `AGENTS.md` | The portable entry point, for agents that are not Claude Code |
-| `references/sources.md` | Every text / layout / line / glyph / font source, its terms, and the defects found in it |
-| `references/numbering.md` | Āyah, word, page and line numbering — and why three of the four are per-resource |
-| `references/layout.md` | Glyph editions, Unicode editions (IndoPak), tajwīd `COLR`/`CPAL`, the fitting algorithms |
-| `references/licensing.md` | The font-metadata check, the survey format, the postures |
-| `references/verification.md` | Every gate, with the failure it catches, plus a device-pass checklist |
-| `references/flutter.md` | Measured Flutter patterns |
-| `scripts/` | Three runnable gates, no dependencies |
+| [`SKILL.md`](SKILL.md) | The ten laws, the two rendering models, the seven stages |
+| [`AGENTS.md`](AGENTS.md) | The portable entry point, for agents that are not Claude Code |
+| [`references/sources.md`](references/sources.md) | Every text / layout / line / glyph / font source, its terms, and the defects found in it |
+| [`references/numbering.md`](references/numbering.md) | Āyah, word, page and line numbering — and why three of the four are per-resource |
+| [`references/layout.md`](references/layout.md) | Glyph editions, Unicode editions (IndoPak), tajwīd `COLR`/`CPAL`, the fitting algorithms |
+| [`references/licensing.md`](references/licensing.md) | The font-metadata check, the survey format, the postures |
+| [`references/verification.md`](references/verification.md) | Every gate, with the failure it catches, plus a device-pass checklist |
+| [`references/flutter.md`](references/flutter.md) | Measured Flutter patterns |
+| [`scripts/`](scripts/) | Three runnable gates, no dependencies |
 
 ### The scripts are the point
 
@@ -119,7 +123,7 @@ print converge on.
 9. **Never export the glyphs. Export the text.**
 10. **Every guard fails loudly in both directions.**
 
-Each one is in `SKILL.md` with the measurement that produced it.
+Each one is in [`SKILL.md`](SKILL.md) with the measurement that produced it.
 
 ## What this repository does not ship
 
@@ -130,8 +134,9 @@ to verify what you receive. Every one of them carries its own terms — several
 carry terms their own distribution pages do not mention — and clearing them is
 your responsibility, not this repository's.
 
-Read `references/licensing.md` before you bundle anything. It exists because
-the check it describes takes five seconds and was skipped.
+Read [`references/licensing.md`](references/licensing.md) before you bundle
+anything. It exists because the check it describes takes five seconds and was
+skipped.
 
 ## Provenance
 
@@ -150,7 +155,7 @@ Most valuable, in order:
 
 1. **A defect found in a source**, with the rows and how you know.
 2. **A licence answer in writing** from a rights holder — several of the ⚠️ rows
-   in `sources.md` are waiting on exactly that.
+   in [`sources.md`](references/sources.md) are waiting on exactly that.
 3. **A measurement that contradicts one here.** Bring the numbers; they will be
    taken seriously and the table will change.
 4. **An OFL Nastaʿlīq with IndoPak orthography and PUA āyah numerals.** It would
@@ -158,8 +163,9 @@ Most valuable, in order:
 
 ## Licence
 
-MIT, for the prose and scripts in this repository only. See `LICENSE` — it
-cannot and does not cover any muṣḥaf resource, because none is shipped here.
+MIT, for the prose and scripts in this repository only. See [`LICENSE`](LICENSE)
+— it cannot and does not cover any muṣḥaf resource, because none is shipped
+here.
 
 ---
 
@@ -180,9 +186,13 @@ cannot and does not cover any muṣḥaf resource, because none is shipped here.
 
 **التنصيب** — في Claude Code:
 
+</div>
+
 ```bash
 git clone https://github.com/abdelrahman-abied/build-a-quran-app-ai-skill ~/.claude/skills/mushaf
 ```
+
+<div dir="rtl">
 
 ومع أي وكيل آخر، استنسخها في مشروعك ووجّهه إلى `AGENTS.md`. والسكربتات الثلاثة
 بايثون بلا اعتمادية واحدة، فتعمل في CI بلا نموذج أصلًا.
