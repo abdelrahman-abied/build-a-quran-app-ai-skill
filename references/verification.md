@@ -63,6 +63,20 @@ Per edition, at minimum:
 A golden that covers only the average page covers the case that was never going
 to break.
 
+### One pen, and the print unmoved
+
+Two properties a golden will not state, so state them:
+
+- **One pen per page** (Law 11). On a page that has a short or a centred
+  line, every line is the same height, and the basmala with them. The
+  failure — each line scaled to the measure on its own — passes on a page of
+  full lines.
+- **The print unmoved** (Law 12). Every printed line is set with wrapping off
+  and one line at most; its drawn text is the line's own text. Assert both.
+- When the drawn text deliberately differs from the stored text — a face that
+  needs its marks re-encoded — compare **through the same transform**, and
+  assert the transform keeps the length, so every range still lands.
+
 ### The test that a one-āyah fixture cannot pass
 
 **When asserting that a target āyah is marked, assert that the others are
@@ -124,6 +138,29 @@ on real hardware, and name what was not.
 - [ ] Download UI shows a **per-edition** breakdown, and a bundled-face edition
       is **absent** from it rather than showing 0 of N.
 - [ ] Swipe feel on the slowest device you support, with a cold cache.
+- [ ] **Four pages of every edition** — al-Fātiḥa, the opening of al-Baqara, a
+      page where a sūrah opens mid-leaf, the last page — as one composite image
+      per edition, **before and after** any rendering change: rows counted,
+      the words of each row read (Law 12), every line one height (Law 11).
+- [ ] **Every paper the app offers** (light, sepia, dark, black). A phone in
+      night mode with the app following the system shows only one of them.
+- [ ] **The vowels sit on their letters**, in the sūrah's name and on a page.
+- [ ] **A header's name is centred by its ink**, not its box — measure it on
+      the screenshot.
+- [ ] **On a phone, the orientation the app requests inside the reader is
+      portrait** — read it from the system; the phone's auto-rotate may be off.
+
+**On a phone that someone else owns** — a test device that is also a
+person's phone — look at the screen before every input. A tap sent to a
+screen that had scrolled since the last look opens something else. Check for
+a live call before sending anything, never put input on a timer, and put
+back every setting you change (theme, print, page, stay-awake), proven
+against a snapshot.
+
+**Read the report the way the reader meant it.** "Sūrah X is in a bigger
+font than sūrah Y" was first measured as the two sūrah *names* — equal to the
+pixel — when the reader meant the two sūrahs' *āyāt*. Ask, or look at the
+whole page they are looking at, before measuring the thing you assumed.
 
 Then write down what you did **not** cover, by name. An unlisted gap reads as a
 covered one.
@@ -148,6 +185,22 @@ covered one.
 
 Measure A/B with warming toggled, on the device, over a fixed number of swipes
 at a fixed cadence. A number from an emulator's translated GPU is not a number.
+
+What the averages hid, from one reader:
+
+- **The longest frame, not the median, is where a page turn catches.** A
+  header change left the medians alone and moved the longest frame of a run
+  from 20–33 ms to 38–45. Report the maximum and the count over budget, not
+  only percentiles.
+- **Sample the CPU inside the longest frames.** Over the whole run the cause
+  (line justification planned in the page's first frame) did not rank; inside
+  the six longest frames it was 70% of their time.
+- **Measure at a reader's cadence**: pausing between swipes lets idle
+  warm-ups run and hides the frame you are looking for.
+- **The device drifts.** The same build re-measured an hour later had four
+  times the frames over budget. Interleave the arms (A, B, A) in one sitting.
+- **Ornament costs raster, every frame**, unless it is baked into an image:
+  a vector header added ~1.5 ms to every frame of a page turn.
 
 ---
 

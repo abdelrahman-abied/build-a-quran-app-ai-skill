@@ -163,10 +163,70 @@ implementation first and watch them answer the wrong āyah.
 - **Lines stack at their own heights inside a centred column.** One `Expanded`
   per line gives fifteen stripes with gutters, because a line scales to the
   measure's *width* and a phone leaf is far taller than a muṣḥaf's.
-- **`BoxFit.fitWidth` for a justified line, `BoxFit.scaleDown` for a centred
-  one**, chosen from the layout's `is_centered`.
+- **Not one `BoxFit.fitWidth` per line.** That scales every justified line on
+  its own, so a short line is drawn in a larger hand (Law 11). Measure each
+  line's natural width once per page with a `TextPainter` at the nominal size;
+  the widest justified line sets the scale. Widen a shorter line's gaps with
+  `TextStyle.wordSpacing = min(slack / spaces, cap)` and then `fitWidth` it; put
+  a centred line — and the basmala — in a `SizedBox(width: widest)` inside a
+  `FittedBox` (`contain` for the basmala, so it never stands taller than its
+  slot). Lines that inherit the phone's `TextScaler` are measured without it:
+  multiply the added gap and the box width by
+  `textScaler.scale(size) / size`.
+- **`softWrap: false, maxLines: 1` on every printed line** (Law 12). A line
+  too wide is scaled, never broken; with wrapping allowed, the engine moves a
+  word to a line of its own and nothing looks wrong.
+- **A header's text gets a whole style: `TextStyle(inherit: false, …)`.**
+  Merged into the app's body style, a sūrah name drew 8 px below the middle of
+  a 42 px panel; with `inherit: false`, 1 px.
 - **A `Column` in a `bottomNavigationBar` gets loose constraints** — it needs
   `MainAxisSize.min`, or the body silently renders at zero height.
+
+---
+
+### A painted header: bake it, do not re-record it
+
+`RepaintBoundary` plus `CustomPaint(isComplex: true, willChange: false)` did
+**not** stop an illuminated header from costing ~1.5 ms of raster on every
+frame of a page turn (Skia, Flutter 3.50, a mid-range Android 10 phone). What
+did: paint the static marks once with `PictureRecorder` →
+`picture.toImageSync(w * dpr, h * dpr)`, keep the image in a small LRU keyed
+by `(design size, pixel ratio, colours)` — a record of the colours, so two
+palettes that agree share one — and `drawImageRect` it each frame. Keep the
+few shapes that sit against the text as paths. Build the paths themselves
+once per size too: the lattice was over a thousand `moveTo`/`lineTo` calls,
+each a trip into the engine.
+
+Render it from a test at the device's pixel ratio
+(`tester.view.devicePixelRatio = 3`) before judging it: an image baked at 1
+and captured at 3 looks blurred and is not.
+
+### The flowing page's justification: warm it
+
+A kashīda justifier (several `TextPainter` layouts per run) kept
+24 plans and was never warmed, so the frame a page first appeared in paid for
+every run on it. Warm the neighbours' plans in your idle pacer after their
+fit, calling the planner with **exactly** the span, width and strut
+the build will use (the plan's cache key is made of them), keep 64, and
+guard against re-asking on every rebuild (a recited word rebuilds the page).
+
+### Orientation: `setPreferredOrientations` overrides the manifest
+
+On Android it is `Activity.setRequestedOrientation`, so a reader that calls
+it to allow landscape for a tablet spread **unlocks every phone** too. Gate
+it:
+
+```dart
+final d = PlatformDispatcher.instance.implicitView?.display;
+final large = d != null &&
+    math.min(d.size.width, d.size.height) / d.devicePixelRatio >= 600;
+```
+
+Count readers (one replaces another, and Flutter builds the incoming route
+before disposing the outgoing one), and give back only what was taken.
+Verify on the device: `adb shell dumpsys window displays` → your
+`ActivityRecord`'s `mOrientation` (1 portrait, 2 user/free) with the reader
+open. `dumpsys activity activities` does not show it.
 
 ---
 
@@ -247,3 +307,19 @@ _inFlight[page] = fetch(page).whenComplete(() { _inFlight.remove(page); });
 - Measure with a **release or profile** build on the slowest device you support,
   with a **cold cache**, and state which. An emulator's translated GPU inflates
   raster time enough to make the number meaningless.
+- **To find what fills a long frame, sample inside it.** Listen to the
+  `Extension` stream for `Flutter.Frame` (each carries `startTime` and
+  `build`), turn the profiler on over the VM service (`setFlag profiler true`,
+  `profile_period 250`), and after the run fetch `getCpuSamples` with an origin
+  from `getVMTimelineMicros`. Count each sample's stack only where its
+  timestamp falls inside the six longest frames. Averaged over the whole run
+  the justifier was invisible; inside the long frames it was 70% of them.
+- **Swipe at a reader's cadence.** Idle warm-ups run in the gaps; a script that
+  pauses between swipes (to check the phone is free, say) hands them time and
+  hides the very frame you are hunting.
+- **Interleave the arms, and re-measure the baseline.** The same APK,
+  re-measured an hour later on the same phone, went from 1–3 to 11–13 frames
+  over budget. A/B taken at different sittings measures the phone.
+- **A phone in night mode with the app on "follow system" shows only the dark
+  theme.** Switch the app's own theme to each paper, survey, and put it back —
+  and diff its preferences against a snapshot to prove you did.

@@ -5,7 +5,7 @@ and loads `references/` on demand; every other tool should start here.
 
 ## Read this first
 
-1. **`SKILL.md`** — the ten laws, the two rendering models, the seven stages.
+1. **`SKILL.md`** — the twelve laws, the two rendering models, the seven stages.
    Read it in full before writing muṣḥaf code.
 2. **`references/`** — load only what the task needs:
 
@@ -26,7 +26,7 @@ python3 scripts/verify_corpus.py --sqlite quran.db --page-col qcf_page --pages 6
 python3 scripts/reconcile_glyphs.py a.json b.json c.json --rulings rulings.json
 ```
 
-## The ten laws, in one line each
+## The twelve laws, in one line each
 
 Full statements, with the measurements behind them, are in `SKILL.md`.
 
@@ -40,6 +40,8 @@ Full statements, with the measurements behind them, are in `SKILL.md`.
 8. **Position travels by āyah, never by page.**
 9. **Never export the glyphs. Export the text.**
 10. **Every guard fails loudly in both directions.**
+11. **A page is written in one pen.**
+12. **A line's words and a page's lines belong to the print.**
 
 ## Why the laws exist
 

@@ -26,7 +26,7 @@ So every rule below is a way of making a wrong thing **loud** instead of pretty.
 
 ---
 
-## The ten laws
+## The twelve laws
 
 Break these knowingly or not at all.
 
@@ -195,6 +195,52 @@ exceptions is how a bad import wins quietly. A working guard has three parts:
    exactly** — over-run or fall short and the build stops. A line can then never
    begin mid-word.
 
+### 11. A page is written in one pen.
+
+The press writes a leaf in one hand at one size: every line, the basmala, the
+sūrah's name in its header. Three separate ways of breaking that shipped in
+one reader, each one perfectly legible, each one found by a reader and not
+by a test:
+
+- **Each line fitted on its own.** A Unicode page scaled every justified line
+  to the measure independently, so a line of fewer letters was drawn in a
+  larger hand than a line of many — two sūrahs on one leaf in visibly
+  different sizes, and on the last leaf a short centred line half as large
+  again as the lines over it. **The widest line sets the page's one scale.**
+  A shorter line reaches the margins by widening the gaps between its words
+  (the press's own answer), never by enlarging its letters; a centred line
+  and the basmala are set at the same scale, in a box as wide as the widest
+  line.
+- **Fixed headers beside fitted text.** The text was fitted per page (14–28
+  px) while the sūrah header and the basmala were fixed sizes. On an average
+  page they agreed; on a dense leaf of three sūrahs the āyāt shrank and the
+  headers did not. **Set the header, the panel and the basmala from the
+  page's fitted size**, and put them inside the fit's measure rather than
+  subtracting a constant from the page beforehand.
+- **A fixed basmala in a scaled page.** The basmala kept its own size while
+  the lines around it were scaled, so it stood larger than the āyāt it opens.
+
+Compare line heights on a page that has a short line on it. It is the one
+check that sees all three.
+
+### 12. A line's words and a page's lines belong to the print.
+
+Nothing on screen may move them: not a font change, not a size change, not a
+fit, not a theme. Every fix in this file changes how a line is *drawn*; none
+may change *which words* are on it or *how many lines* the page has.
+
+- **Forbid wrapping on every printed line** — no soft wrap, one line maximum.
+  A line that is too wide is scaled down, never broken. A layout engine
+  allowed to wrap will move the last word of a line to a line of its own, and
+  the page will still look like a muṣḥaf.
+- **Prove it before and after any rendering change**: the same pages, rows
+  counted, the words of each row read, in both builds. A change that alters
+  either has changed the print.
+- A reader that sets its own lines — an app-set page with no line data — is
+  not bound by this law: its line breaks were never the print's, only its
+  āyāt per page are. Say so in its code, so nobody holds it to a standard it
+  cannot meet, or holds a printed edition to its looser one.
+
 ---
 
 ## The two rendering models
@@ -330,6 +376,33 @@ Three things that are not obvious from that schema:
   *units* (these codepoints reach into supplementary planes), or you cannot map
   a tap back to an āyah on a page that is one joined string.
 
+**Flowing Unicode pages (an app-set page in a Qurʾānic face)**
+
+- **Size the header and the basmala from the fitted text size** (Law 11), and
+  count them inside the fit. Take the size they are set from down to a whole
+  pixel, so neighbouring pages share one header and one cached ornament
+  rather than each page painting its own at 17.31 and 17.38.
+- **Look at where the marks sit before choosing the face.** One widely used
+  OFL Qurʾānic face lifts its marks high on purpose, to leave room for stacked
+  ones; across a whole page the vowels stood visibly clear of their letters.
+  The King Fahd Complex's own Unicode face sets them on the letters — but
+  **reads the Complex's encoding, not Tanzil's**: swap U+0652 → U+06E1 first,
+  then U+06DF → U+0652 (order matters), or every sukūn draws as the silent
+  zero and every silent alif as a dotted circle that breaks the word's
+  joining. Check the face's cmap against **every** code point of the whole
+  text after the swap (62 distinct ones; the face covered all). Both swaps are
+  one code unit for one, which is what keeps every āyah, word and tap range
+  measured on the stored text valid — assert the lengths are equal.
+- **Keep the marks that are not words in a face that has them.** The face
+  above lacks U+202F (the joiner that glues an āyah's last word to its
+  medallion); the medallion, the ۩ and the joiner stayed in the old face, and
+  so did the line strut, so the line pitch did not move.
+- **Justification is a cost, so plan it ahead.** Justifying an app-set line
+  with kashīda takes several layouts of the run; planned only when a page
+  first appears, it was most of a 55–99 ms frame at every page turn on a
+  mid-range phone. Plan the neighbours' lines in idle time, after their fit,
+  with exactly the inputs the build will use.
+
 **Unicode editions (IndoPak and its kin)**
 
 - **Lines stack at their own heights and the block centres.** Giving each of
@@ -348,6 +421,30 @@ Three things that are not obvious from that schema:
 - The bundled face may carry **āyah numerals and waqf marks in the private-use
   area**, so substituting a different face loses the numbering, not merely the
   hand.
+- **One scale per page** (Law 11): the widest justified line sets it; a
+  shorter line is widened between its words, up to a cap past which the
+  words look adrift, and only the remainder is scaled; centred lines and the
+  basmala sit in a box as wide as the widest line. Measure the lines' natural
+  widths once per page and keep them, keyed by the page's text and not by its
+  number alone.
+- **Centre a header's name by its ink, and measure it.** A name that inherited
+  the app's body text style drew 8 px below the middle of a 42 px panel —
+  its descender through the lower rule — and the box it sat in was perfectly
+  centred. Give it a style of its own, whole.
+
+**Every edition**
+
+- **The sūrah header is painted, and the painting has a cost.** An
+  illuminated panel (jewelled border, a lattice of stars, roundels) drawn as
+  paths on every frame added ~1.5 ms to every raster frame of a page turn on a
+  mid-range phone; caching hints and a repaint boundary did not remove it.
+  Paint the many small marks **once** into an image all headers of that size
+  and palette share, and keep as paths only what sits against the name.
+- **A phone is portrait, the muṣḥaf included.** A reader that unlocks
+  landscape for a tablet's two-page spread must do it only on a large screen
+  (a shortest side of 600 dp, read from the display, not the window). On
+  Android a per-screen orientation request overrides the manifest's lock, so
+  an ungated request turns the muṣḥaf on every phone with auto-rotate on.
 
 **Colour (tajwīd) editions**
 
@@ -385,8 +482,15 @@ Layout correctness cannot be eyeballed; it must be counted.
 - **Cross-row leakage**: when asserting a target āyah is marked, assert **the
   others are not**. A single-āyah fixture cannot see a leak.
 - **Goldens** of a sparse page and a dense page, per edition.
+- **One pen per page** (Law 11): on a page with a short or centred line, every
+  line and the basmala the same height; the header in proportion to the text.
+- **The print unmoved** (Law 12): rows per page and the words of each row,
+  read before and after every rendering change.
 - **A device pass**, on real hardware, listed explicitly — including one press
-  at each end of a line that carries two āyāt.
+  at each end of a line that carries two āyāt, **four pages of every edition
+  on every paper the app offers** (a phone in night mode shows only the dark
+  one unless you switch it), and the orientation the app actually requests
+  inside the reader.
 
 → `references/verification.md`, `scripts/`
 

@@ -62,7 +62,7 @@ most tools read on their own:
 git clone https://github.com/abdelrahman-abied/build-a-quran-app-ai-skill .agents/mushaf
 ```
 
-[`AGENTS.md`](AGENTS.md) carries the ten laws and a table saying which reference
+[`AGENTS.md`](AGENTS.md) carries the twelve laws and a table saying which reference
 file a given task needs; everything deeper stays in [`SKILL.md`](SKILL.md).
 [`.github/copilot-instructions.md`](.github/copilot-instructions.md) and
 [`GEMINI.md`](GEMINI.md) are short pointers to it, for the tools that look there
@@ -85,7 +85,7 @@ Flutter-specific file.
 
 | File | What it holds |
 |---|---|
-| [`SKILL.md`](SKILL.md) | The ten laws, the two rendering models, the seven stages |
+| [`SKILL.md`](SKILL.md) | The twelve laws, the two rendering models, the seven stages |
 | [`AGENTS.md`](AGENTS.md) | The portable entry point, for agents that are not Claude Code |
 | [`references/sources.md`](references/sources.md) | Every text / layout / line / glyph / font source, its terms, and the defects found in it |
 | [`references/numbering.md`](references/numbering.md) | Āyah, word, page and line numbering — and why three of the four are per-resource |
@@ -110,7 +110,7 @@ OFL 1.1 and one declaring *NOT FOR DISTRIBUTION*. `verify_corpus.py` counts its
 way to 88,246 glyphs — the number three independent transcriptions of the 1405H
 print converge on.
 
-## The ten laws
+## The twelve laws
 
 1. **Two sources cannot settle anything. Three can.**
 2. **A pin is not correctness.**
@@ -122,6 +122,8 @@ print converge on.
 8. **Position travels by āyah, never by page.**
 9. **Never export the glyphs. Export the text.**
 10. **Every guard fails loudly in both directions.**
+11. **A page is written in one pen.**
+12. **A line's words and a page's lines belong to the print.**
 
 Each one is in [`SKILL.md`](SKILL.md) with the measurement that produced it.
 
